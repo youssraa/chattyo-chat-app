@@ -52,18 +52,22 @@ sendMessage : async(messageData)=>{
     }
 
 },
-subscribeToMessages : ()=>{
-    const{selectedUser}=get();
-    if(!selectedUser) return ;
-    const socket = useAuthStore.getState().socket;
-    if(newMessage.senderId !== selectedUser._id) return ; 
-    socket.on("newMessage" , (newMessage)=>{
-        set({
-            messages : [...get().messages, newMessage]
-        });
-    })
+subscribeToMessages: () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
 
-},
+    const socket = useAuthStore.getState().socket;
+
+    socket.on("newMessage", (newMessage) => {
+      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+      if (!isMessageSentFromSelectedUser) return;
+
+      set({
+        messages: [...get().messages, newMessage],
+      });
+    });
+  },
+
 unsubscribeFromMessages :()=>{
 
     const socket = useAuthStore.getState().socket;
